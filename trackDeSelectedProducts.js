@@ -1,5 +1,7 @@
 /**
- * Template JS File: asc-prod-config-cards-calc-child-price.js
+ * File: trackDeSelectedProducts.js
+ * Desc: Angular controller to track changes made during Health plan selection flow
+ *
  */
 
 // Define Controller
@@ -11,8 +13,7 @@ vlocity.cardframework.registerModule.controller('insCoveragesCtrl', [
   function ($scope, $rootScope, $timeout, $q) {
     'use strict';
 
-    // set condtional for Edit Quote
-    // use  if ($scope.isEditQuote) { ... }
+    // set boolean for edit flow
     $scope.isEditQuote = $scope.bpTree.bpSubType == 'ASC_EditQuote';
 
     /* Implement preSelectedChildPlans and deSelectedChildPlans only for Edit Quote  */
@@ -23,7 +24,7 @@ vlocity.cardframework.registerModule.controller('insCoveragesCtrl', [
 
       /**
        *  Function: setPreSelectedChildPlans()
-       *  Desc: Grabs Selected Plans by the Id and stores them in new preSelectedChildPlans[]
+       *  Desc: Grabs Selected Plans by Id and stores them in new preSelectedChildPlans[]
        **/
       $scope.setPreSelectedChildPlans = () => {
         $scope.bpTree.response.records.forEach((record) => {
@@ -41,13 +42,13 @@ vlocity.cardframework.registerModule.controller('insCoveragesCtrl', [
               }
             });
           }
-        }); // records for-each
+        }); // end records for-each
       };
 
-      // Watch: if we have Data Records, call a fxn
-      $scope.$watch('bpTree.response.records', () => {
-        $scope.setPreSelectedChildPlans();
-      });
+      // Issue a Watch: if we have Data Records, invoke fxn
+      $scope.$watch('bpTree.response.records', () =>
+        $scope.setPreSelectedChildPlans()
+      );
 
       /**
        * Function: setDeSelectedChildPlans()
@@ -62,25 +63,22 @@ vlocity.cardframework.registerModule.controller('insCoveragesCtrl', [
         }
       };
 
-      /* Utility Function: arrayRemove() */
+      /* Utility Function: arrayRemove()  - hey now this is functional programming */
       $scope.arrayRemove = (arr, value) => arr.filter((ele) => ele !== value);
     }
 
     /**
      * Function: selectOptionalCoverage()
-     * Desc: Runs onChange of product checkbox
+     * Use Case: Runs onChange of product checkbox
      */
-    $scope.selectOptionalCoverage = function (
+    $scope.selectOptionalCoverage = (
       product,
       response,
       control,
       scp,
       sortFunc
-    ) {
-      if (!product.isOptional) {
-        console.log('not optional', product);
-        return;
-      }
+    ) => {
+      if (!product.isOptional) return;
 
       if ($scope.isEditQuote) {
         if (!product.isSelected) {
